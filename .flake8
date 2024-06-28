@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 79
+extend-ignore = E203
+per-file-ignores =
+    task_manager/settings.py: E501
+    **/migrations/*.py: E501

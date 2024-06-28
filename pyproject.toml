@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "task-manager"
+version = "0.1.0"
+description = ""
+authors = ["Vitaliy Drozdov <vitdrzdv@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "4.2.5"
+
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+flake8 = "^7.1.0"
+pre-commit = "^3.7.1"
+black = "^24.4.2"
+django-debug-toolbar = "4.2.0"
+
+
+[tool.black]
+line-length = 79
+exclude = '''
+    migrations
+    venv
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 79
+skip_glob = ["**/migrations/*.py"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
