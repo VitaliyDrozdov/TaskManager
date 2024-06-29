@@ -48,3 +48,23 @@ class Task(models.Model):
 
     def __str__(self):
         return self.name
+
+    def calculate_efforts(self):
+        subtasks = self.subtasks.all()
+        self.planned_effort = (
+            sum(val.calculate_efforts() for val in subtasks)
+            + self.planned_effort
+        )
+        return self.planned_effort
+
+    def calculate_time(self):
+        subtasks = self.subtasks.all()
+        self.time_fact = (
+            sum(val.calculate_time() for val in subtasks) + self.time_fact
+        )
+        return self.time_fact
+
+    def save(self, *args, **kwargs):
+        self.calculate_efforts()
+        self.calculate_time()
+        super().save(*args, **kwargs)
