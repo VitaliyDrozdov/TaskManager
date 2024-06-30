@@ -1,32 +1,64 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views import generic
 
 from tasks.forms import TaskForm
 from tasks.models import Task
 
 
-def task_list(request):
-    tasks = Task.objects.filter(parent_task__isnull=True)
-    return render(request, "tasks/task_list.html", {"tasks": tasks})
+class TaskListView(generic.ListView):
+    model = Task
+    template_name = "tasks/task_list.html"
+    context_object_name = "tasks"
+
+    def get_queryset(self):
+        return Task.objects.filter(parent_task__isnull=True)
 
 
-def task_detail(request, task_id):
-    task = get_object_or_404(Task, task_id=task_id)
-    return render(request, "tasks/task_detail.html", {"task": task})
+class TaskDetailView(generic.DetailView):
+    model = Task
+    template_name = "tasks/task_detail.html"
+    context_object_name = "task"
+    pk_url_kwarg = "task_id"
 
 
-def task_create(request):
-    form = TaskForm(request.POST, instance=Task)
-    if form.is_valid():
-        form.save()
-        return JsonResponse({"status": "succes"})
-    return JsonResponse({"status": "error", "errors": form.errors})
+class TaskCreateView(generic.CreateViewView):
+    model = Task
+    form_class = TaskForm
+    template_name = "tasks/task_form.html"
+    pk_url_kwarg = "task_id"
+    success_url = reverse_lazy("task_list")
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return redirect("tasks:task_detail", task_id=self.object.id)
 
 
-def task_edit(request, task_id):
-    task = get_object_or_404(Task, task_id=task_id)
-    form = TaskForm(request.POST, instance=Task)
-    if form.is_valid():
-        form.save()
-        return JsonResponse({"status": "succes", "task": task})
-    return JsonResponse({"status": "error", "errors": form.errors})
+class TaskUpdateView(generic.UpdateView):
+    model = Task
+    form_class = TaskForm
+    template_name = "tasks/task_form.html"
+    pk_url_kwarg = "task_id"
+
+    def get_success_url(self) -> str:
+        return reverse_lazy("task_detail", kwargs={"task_id": self.object.id})
+
+
+class TaskDeleteView(generic.DeleteView):
+    model = Task
+    template_name = "tasks/task_confirm_delete.html"
+    success_url = reverse_lazy("tasks:task_list")
+    pk_url_kwarg = "task_id"
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.subtasks.exists():
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "errors": "Task with subtasks cannot be deleted",
+                }
+            )
+        self.object.delete()
+        return redirect(self.success_url)
