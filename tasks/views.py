@@ -36,6 +36,11 @@ class TaskUpdateView(generic.UpdateView):
     template_name = "tasks/task_form.html"
     pk_url_kwarg = "task_id"
 
+    def form_valid(self, form):
+        task = form.save(commit=False)
+        task.save()
+        return super().form_valid(form)
+
     def get_success_url(self) -> str:
         return reverse_lazy(
             "tasks:task_detail", kwargs={"task_id": self.object.id}
