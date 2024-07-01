@@ -1,15 +1,14 @@
-from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
-User = get_user_model()
 
 
 class Task(models.Model):
     class TaskStatus(models.TextChoices):
         ASSIGNED = "ASSIGNED", _("Назначана")
         IN_PROGRESS = "IN_PROGRESS", _("Выполняется")
-        PASUSED = "PAUSED", _("Приостановлена")
+        PAUSED = "PAUSED", _("Приостановлена")
         COMPLETED = "COMPLETED", _("Завершена")
 
     name = models.CharField("Название", max_length=50, unique=True)
@@ -51,20 +50,49 @@ class Task(models.Model):
 
     def calculate_efforts(self):
         subtasks = self.subtasks.all()
-        self.planned_effort = (
+        return self.planned_effort + (
             sum(val.calculate_efforts() for val in subtasks)
-            + self.planned_effort
         )
-        return self.planned_effort
 
     def calculate_time(self):
         subtasks = self.subtasks.all()
-        self.time_fact = (
-            sum(val.calculate_time() for val in subtasks) + self.time_fact
-        )
-        return self.time_fact
+        return sum(val.calculate_time() for val in subtasks) + self.time_fact
 
     def save(self, *args, **kwargs):
+        self.check_status()
         self.calculate_efforts()
         self.calculate_time()
+        if self.status == self.TaskStatus.COMPLETED:
+            self.complete_tasks_subtasks()
+            self.completed_at = timezone.now()
         super().save(*args, **kwargs)
+
+    def check_status(self):
+        if self.status == self.TaskStatus.COMPLETED:
+            # if (
+            #     self.parent_task
+            #     and self.parent_task.status != self.TaskStatus.COMPLETED
+            # ):
+            #     raise ValidationError(
+            #         "Нельзя завершить задачу, если подзадачи не завершены."
+            #     )
+            for subtask in self.subtasks.all():
+                if subtask.status != self.TaskStatus.COMPLETED:
+                    raise ValidationError(
+                        "Нельзя завершить задачу, если подзадачи не завершены."
+                    )
+        if self.pk:
+            prev_status = Task.objects.get(pk=self.pk).status
+            if (
+                self.status == self.TaskStatus.COMPLETED
+                or self.status == self.TaskStatus.PAUSED
+            ) and prev_status != self.TaskStatus.IN_PROGRESS:
+                raise ValidationError(
+                    'Для данного действия необходим статус "В работе".'
+                )
+
+    def complete_tasks_subtasks(self):
+        self.status = self.TaskStatus.COMPLETED
+        for subtask in self.subtasks.all():
+            subtask.complete_tasks_subtasks()
+        self.save()

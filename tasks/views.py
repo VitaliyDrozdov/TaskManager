@@ -23,16 +23,11 @@ class TaskDetailView(generic.DetailView):
     pk_url_kwarg = "task_id"
 
 
-class TaskCreateView(generic.CreateViewView):
+class TaskCreateView(generic.CreateView):
     model = Task
     form_class = TaskForm
     template_name = "tasks/task_form.html"
-    pk_url_kwarg = "task_id"
-    success_url = reverse_lazy("task_list")
-
-    def form_valid(self, form):
-        self.object = form.save()
-        return redirect("tasks:task_detail", task_id=self.object.id)
+    success_url = reverse_lazy("tasks:task_detail")
 
 
 class TaskUpdateView(generic.UpdateView):
@@ -42,7 +37,9 @@ class TaskUpdateView(generic.UpdateView):
     pk_url_kwarg = "task_id"
 
     def get_success_url(self) -> str:
-        return reverse_lazy("task_detail", kwargs={"task_id": self.object.id})
+        return reverse_lazy(
+            "tasks:task_detail", kwargs={"task_id": self.object.id}
+        )
 
 
 class TaskDeleteView(generic.DeleteView):
