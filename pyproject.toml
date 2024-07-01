@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 django = "4.2.5"
 django-bootstrap5 = "^24.2"
+pytest = "^8.2.2"
 
 
 [tool.poetry.group.dev.dependencies]

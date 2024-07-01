@@ -18,8 +18,10 @@ repos:
   rev: 5.13.2
   hooks:
     - id: isort
+      exclude: ^tests/
 
 - repo: https://github.com/PyCQA/flake8
   rev: 7.1.0
   hooks:
     - id: flake8
+      exclude: ^tests/

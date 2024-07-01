@@ -69,13 +69,6 @@ class Task(models.Model):
 
     def check_status(self):
         if self.status == self.TaskStatus.COMPLETED:
-            # if (
-            #     self.parent_task
-            #     and self.parent_task.status != self.TaskStatus.COMPLETED
-            # ):
-            #     raise ValidationError(
-            #         "Нельзя завершить задачу, если подзадачи не завершены."
-            #     )
             for subtask in self.subtasks.all():
                 if subtask.status != self.TaskStatus.COMPLETED:
                     raise ValidationError(
