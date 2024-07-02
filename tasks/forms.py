@@ -16,3 +16,9 @@ class TaskForm(forms.ModelForm):
             "completed_at",
             "parent_task",
         )
+
+        widgets = {
+            "completed_at": forms.DateTimeInput(
+                attrs={"type": "datetime-local"}, format="%d.%m.%Y %H:%M"
+            )
+        }
