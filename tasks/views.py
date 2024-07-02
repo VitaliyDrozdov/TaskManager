@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -38,7 +39,12 @@ class TaskUpdateView(generic.UpdateView):
 
     def form_valid(self, form):
         task = form.save(commit=False)
-        task.save()
+        new_status = form.cleaned_data.get("status")
+        try:
+            task.set_status(new_status)
+        except ValidationError as e:
+            form.add_error("status", str(e))
+            return self.form_invalid(form)
         return super().form_valid(form)
 
     def get_success_url(self) -> str:

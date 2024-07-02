@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ task.name }}</h1>
+    <hr>
+    <div class="row">
+        <div class="col-md-8">
+            <p><strong>Описание:</strong> {{ task.description }}</p>
+            <p><strong>Исполнители:</strong> {{ task.assignees }}</p>
+            <p><strong>Плановая трудоемкость:</strong> {{ task.planned_effort }}</p>
+            <p><strong>Фактическое выполнение:</strong> {{ task.time_fact }}</p>
+            <p><strong>Статус:</strong> {{ task.status }}</p>
+            {% if task.completed_at %}
+            <p><strong>Дата завершения:</strong> {{ task.completed_at }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-8">
+            <a href="{% url 'tasks:task_edit' task.id %}" class="btn btn-warning">Редактировать</a>
+            <a href="{% url 'tasks:task_delete' task.id %}" class="btn btn-danger">Удалить</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

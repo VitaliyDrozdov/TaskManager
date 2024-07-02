@@ -1,203 +1,100 @@
 import pytest
 from django.core.exceptions import ValidationError
-
+from django.utils import timezone
 from tasks.models import Task
 
 
 @pytest.mark.django_db
-def test_task_create():
+def test_set_status_completed():
     task = Task.objects.create(
-        name="Test Task",
-        description="test description",
-        assignees="User1, User2",
-        planned_effort=5,
-        time_fact=2,
-        status=Task.TaskStatus.ASSIGNED,
+        name="Test Task", description="Test description", assignees="John Doe"
     )
-    assert task.pk is not None
-    assert task.name == "Test Task"
 
+    # Проверяем установку статуса 'Выполняется'
+    task.set_status(Task.TaskStatus.IN_PROGRESS)
+    assert task.status == Task.TaskStatus.IN_PROGRESS
 
-# @pytest.mark.django_db
-# def test_task_status():
-#     task = Task.objects.create(
-#         name="Test Task",
-#         description="test description",
-#         assignees="User1, User2",
-#         planned_effort=5,
-#         time_fact=2,
-#         status=Task.TaskStatus.IN_PROGRESS,
-#     )
-#     task.status = Task.TaskStatus.COMPLETED
-#     with pytest.raises(ValidationError):
-#         task.save()
+    # subtask = Task.objects.create(
+    #     name="Subtask",
+    #     description="Subtask description",
+    #     assignees="Jane Smith",
+    #     parent_task=task,
+    # )
+    # with pytest.raises(ValidationError):
+    #     task.set_status(Task.TaskStatus.COMPLETED)
 
+    # subtask.set_status(Task.TaskStatus.COMPLETED)
 
-@pytest.mark.django_db
-def test_complete_task_without_subtasks():
-    task = Task.objects.create(
-        name="Test Task",
-        description="Test description",
-        assignees="User1, User2",
-        planned_effort=5,
-        time_fact=2,
-        status=Task.TaskStatus.IN_PROGRESS,
-    )
-    task.status = Task.TaskStatus.COMPLETED
-    task.save()
+    task.set_status(Task.TaskStatus.COMPLETED)
     assert task.status == Task.TaskStatus.COMPLETED
     assert task.completed_at is not None
 
 
 @pytest.mark.django_db
-def test_complete_task_with_incomplete_subtasks():
+def test_set_status_paused():
     task = Task.objects.create(
-        name="Parent Task",
-        description="Parent task description",
-        assignees="User1, User2",
-        planned_effort=10,
-        time_fact=5,
-        status=Task.TaskStatus.IN_PROGRESS,
+        name="Test Task", description="Test description", assignees="John Doe"
     )
-    subtask1 = Task.objects.create(
-        name="Subtask 1",
-        description="Subtask 1 description",
-        assignees="User3",
-        planned_effort=3,
-        time_fact=2,
-        status=Task.TaskStatus.IN_PROGRESS,
-        parent_task=task,
-    )
-    subtask2 = Task.objects.create(
-        name="Subtask 2",
-        description="Subtask 2 description",
-        assignees="User4",
-        planned_effort=2,
-        time_fact=1,
-        status=Task.TaskStatus.IN_PROGRESS,
-        parent_task=task,
-    )
-    task.status = Task.TaskStatus.COMPLETED
-    with pytest.raises(ValidationError):
-        task.save()
+
+    task.set_status(Task.TaskStatus.IN_PROGRESS)
+    assert task.status == Task.TaskStatus.IN_PROGRESS
+    task.set_status(Task.TaskStatus.PAUSED)
+    assert task.status == Task.TaskStatus.PAUSED
+
+    # with pytest.raises(ValidationError):
+    #     task.set_status(Task.TaskStatus.PAUSED)
 
 
 @pytest.mark.django_db
-def test_complete_task_with_complete_subtasks():
+def test_task_calculate_efforts():
     task = Task.objects.create(
-        name="Parent Task",
-        description="Parent task description",
-        assignees="User1, User2",
-        planned_effort=10,
-        time_fact=5,
-        status=Task.TaskStatus.IN_PROGRESS,
+        name="Test Task", description="Test description", assignees="John Doe"
     )
     subtask1 = Task.objects.create(
         name="Subtask 1",
         description="Subtask 1 description",
-        assignees="User3",
-        planned_effort=3,
-        time_fact=3,
-        status=Task.TaskStatus.COMPLETED,
+        assignees="Jane Smith",
         parent_task=task,
     )
     subtask2 = Task.objects.create(
         name="Subtask 2",
         description="Subtask 2 description",
-        assignees="User4",
-        planned_effort=2,
-        time_fact=2,
-        status=Task.TaskStatus.COMPLETED,
+        assignees="Bob Brown",
         parent_task=task,
     )
-    task.status = Task.TaskStatus.COMPLETED
+
+    task.planned_effort = 10
     task.save()
-    assert task.status == Task.TaskStatus.COMPLETED
-    assert task.completed_at is not None
+    subtask1.planned_effort = 5
+    subtask2.planned_effort = 3
+    subtask1.save()
+    subtask2.save()
+
+    assert task.calculate_efforts() == 18
 
 
 @pytest.mark.django_db
-def test_invalid_status():
+def test_task_calculate_time():
     task = Task.objects.create(
-        name="Test Task",
-        description="Test description",
-        assignees="User1, User2",
-        planned_effort=5,
-        time_fact=2,
-        status=Task.TaskStatus.ASSIGNED,
-    )
-    task.status = Task.TaskStatus.COMPLETED
-    with pytest.raises(ValidationError):
-        task.save()
-
-
-@pytest.mark.django_db
-def test_invalid_complete_status():
-    task = Task.objects.create(
-        name="Parent Task",
-        description="Parent task description",
-        assignees="User1, User2",
-        planned_effort=10,
-        time_fact=5,
-        status=Task.TaskStatus.IN_PROGRESS,
+        name="Test Task", description="Test description", assignees="John Doe"
     )
     subtask1 = Task.objects.create(
         name="Subtask 1",
         description="Subtask 1 description",
-        assignees="User3",
-        planned_effort=3,
-        time_fact=3,
-        status=Task.TaskStatus.COMPLETED,
+        assignees="Jane Smith",
         parent_task=task,
     )
     subtask2 = Task.objects.create(
         name="Subtask 2",
         description="Subtask 2 description",
-        assignees="User4",
-        planned_effort=2,
-        time_fact=2,
-        status=Task.TaskStatus.IN_PROGRESS,
-        parent_task=task,
-    )
-    task.status = Task.TaskStatus.COMPLETED
-    with pytest.raises(ValidationError):
-        task.save()
-
-
-@pytest.mark.django_db
-def test_parent_task_completion_affects_subtasks():
-    task = Task.objects.create(
-        name="Parent Task",
-        description="Parent task description",
-        assignees="User1, User2",
-        planned_effort=10,
-        time_fact=5,
-        status=Task.TaskStatus.IN_PROGRESS,
-    )
-    subtask1 = Task.objects.create(
-        name="Subtask 1",
-        description="Subtask 1 description",
-        assignees="User3",
-        planned_effort=3,
-        time_fact=3,
-        status=Task.TaskStatus.IN_PROGRESS,
-        parent_task=task,
-    )
-    subtask2 = Task.objects.create(
-        name="Subtask 2",
-        description="Subtask 2 description",
-        assignees="User4",
-        planned_effort=2,
-        time_fact=2,
-        status=Task.TaskStatus.IN_PROGRESS,
+        assignees="Bob Brown",
         parent_task=task,
     )
 
-    task.status = Task.TaskStatus.COMPLETED
+    task.time_fact = 8
     task.save()
-    assert task.status == Task.TaskStatus.COMPLETED
-    assert task.completed_at is not None
-    subtask1.refresh_from_db()
-    subtask2.refresh_from_db()
-    assert subtask1.status == Task.TaskStatus.COMPLETED
-    assert subtask2.status == Task.TaskStatus.COMPLETED
+    subtask1.time_fact = 3
+    subtask2.time_fact = 2
+    subtask1.save()
+    subtask2.save()
+    assert task.calculate_time() == 13

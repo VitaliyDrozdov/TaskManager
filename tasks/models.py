@@ -50,42 +50,56 @@ class Task(models.Model):
 
     def calculate_efforts(self):
         subtasks = self.subtasks.all()
-        return self.planned_effort + (
-            sum(val.calculate_efforts() for val in subtasks)
-        )
+        if not subtasks:
+            return self.planned_effort
+        else:
+            return self.planned_effort + (
+                sum(val.calculate_efforts() for val in subtasks)
+            )
 
     def calculate_time(self):
         subtasks = self.subtasks.all()
-        return sum(val.calculate_time() for val in subtasks) + self.time_fact
+        if not subtasks:
+            return self.time_fact
+        else:
+            return (
+                sum(val.calculate_time() for val in subtasks) + self.time_fact
+            )
 
-    def save(self, *args, **kwargs):
-        self.check_status()
-        self.calculate_efforts()
-        self.calculate_time()
-        if self.status == self.TaskStatus.COMPLETED:
-            self.complete_tasks_subtasks()
-            self.completed_at = timezone.now()
-        super().save(*args, **kwargs)
-
-    def check_status(self):
-        if self.status == self.TaskStatus.COMPLETED:
-            for subtask in self.subtasks.all():
-                if subtask.status != self.TaskStatus.COMPLETED:
-                    raise ValidationError(
-                        "Нельзя завершить задачу, если подзадачи не завершены."
-                    )
-        if self.pk:
-            prev_status = Task.objects.get(pk=self.pk).status
-            if (
-                self.status == self.TaskStatus.COMPLETED
-                or self.status == self.TaskStatus.PAUSED
-            ) and prev_status != self.TaskStatus.IN_PROGRESS:
+    def set_status(self, new_status):
+        current_status = self.status
+        if new_status == current_status:
+            return
+        if new_status == Task.TaskStatus.COMPLETED:
+            if current_status != Task.TaskStatus.IN_PROGRESS:
                 raise ValidationError(
-                    'Для данного действия необходим статус "В работе".'
+                    "Завершение задачи возможно только"
+                    "из статуса 'Выполняется'."
+                )
+            for subtask in self.subtasks.all():
+                if subtask.status != Task.TaskStatus.COMPLETED:
+                    raise ValidationError(
+                        "Невозможно завершить задачу, пока все подзадачи "
+                        "не будут завершены."
+                    )
+            self.completed_at = timezone.now()
+        elif new_status == Task.TaskStatus.PAUSED:
+            if current_status != Task.TaskStatus.IN_PROGRESS:
+                raise ValidationError(
+                    "Приостановка задачи возможна только "
+                    "из статуса 'Выполняется'."
                 )
 
-    def complete_tasks_subtasks(self):
-        self.status = self.TaskStatus.COMPLETED
-        for subtask in self.subtasks.all():
-            subtask.complete_tasks_subtasks()
+        self.status = new_status
         self.save()
+
+        for subtask in self.subtasks.all():
+            subtask.set_status(new_status)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.status = self.TaskStatus.ASSIGNED
+        super().save(*args, **kwargs)
+        self.time_fact = self.calculate_time()
+        self.planned_effort = self.calculate_efforts()
+        super().save(update_fields=["time_fact", "planned_effort"])

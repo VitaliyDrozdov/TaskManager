@@ -16,7 +16,6 @@ class TaskAdmin(admin.ModelAdmin):
         "parent_task",
     )
     list_editable = (
-        "name",
         "description",
         "assignees",
         "status",

@@ -1,0 +1,11 @@
+
+
+django == 4.2.5
+django-bootstrap5 == 24.2
+
+isort == 5.13.2
+flake8 == 7.1.0
+pre-commit == 3.7.1
+black == 24.4.2
+django-debug-toolbar == 4.2.0
+pytest == 8.2.2
