@@ -24,6 +24,8 @@
         <p><strong>Исполнители:</strong> {{ task.assignees }}</p>
         <p><strong>Плановая трудоемкость:</strong> {{ task.planned_effort }} ч.</p>
         <p><strong>Фактическое выполнение:</strong> {{ task.time_fact }} ч.</p>
+        <p><strong>Общая плановая трудоемкость:</strong> {{ task.total_planned_effort }} ч.</p>
+        <p><strong>Общее фактическое выполнение:</strong> {{ task.total_time_fact }} ч.</p>
         <p><strong>Дата создания:</strong> {{ task.created_at }}</p>
         {% if task.completed_at %}
           <p><strong>Дата завершения:</strong> {{ task.completed_at }}</p>

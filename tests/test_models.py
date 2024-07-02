@@ -1,6 +1,5 @@
 import pytest
 from django.core.exceptions import ValidationError
-from django.utils import timezone
 from tasks.models import Task
 
 

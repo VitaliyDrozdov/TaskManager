@@ -41,6 +41,13 @@ class Task(models.Model):
         on_delete=models.CASCADE,
     )
 
+    total_planned_effort = models.IntegerField(
+        default=0, verbose_name="Общая плановая трудоемкость"
+    )
+    total_time_fact = models.IntegerField(
+        default=0, verbose_name="Общее фактическое выполнение"
+    )
+
     class Meta:
         verbose_name = "Task"
         verbose_name_plural = "Tasks"
@@ -107,8 +114,8 @@ class Task(models.Model):
             self.status = self.TaskStatus.ASSIGNED
             super().save(*args, **kwargs)
         if update_fields is None or "planned_effort" in update_fields:
-            self.planned_effort = self.calculate_efforts()
+            self.total_planned_effort = self.calculate_efforts()
 
         if update_fields is None or "time_fact" in update_fields:
-            self.time_fact = self.calculate_time()
+            self.total_time_fact = self.calculate_time()
         super().save(update_fields=update_fields)
