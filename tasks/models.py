@@ -74,27 +74,26 @@ class Task(models.Model):
             if current_status != Task.TaskStatus.IN_PROGRESS:
                 raise ValidationError(
                     "Завершение задачи возможно только"
-                    "из статуса 'Выполняется'."
+                    " из статуса 'Выполняется'."
                 )
-            for subtask in self.subtasks.all():
-                if subtask.status != Task.TaskStatus.COMPLETED:
-                    raise ValidationError(
-                        "Невозможно завершить задачу, пока все подзадачи "
-                        "не будут завершены."
-                    )
             self.completed_at = timezone.now()
+            self.status = new_status
+            self.save(update_fields=["status", "completed_at"])
+
+            for subtask in self.subtasks.all():
+                subtask.set_status(new_status)
         elif new_status == Task.TaskStatus.PAUSED:
             if current_status != Task.TaskStatus.IN_PROGRESS:
                 raise ValidationError(
                     "Приостановка задачи возможна только "
-                    "из статуса 'Выполняется'."
+                    " из статуса 'Выполняется'."
                 )
+            self.status = new_status
+            self.save(update_fields=["status"])
 
-        self.status = new_status
-        self.save()
-
-        for subtask in self.subtasks.all():
-            subtask.set_status(new_status)
+        else:
+            self.status = new_status
+            self.save(update_fields=["status"])
 
     def save(self, *args, **kwargs):
         if not self.pk:
