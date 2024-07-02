@@ -76,12 +76,18 @@ class Task(models.Model):
                     "Завершение задачи возможно только"
                     " из статуса 'Выполняется'."
                 )
-            self.completed_at = timezone.now()
-            self.status = new_status
-            self.save(update_fields=["status", "completed_at"])
-
             for subtask in self.subtasks.all():
                 subtask.set_status(new_status)
+            if all(
+                subtask.status == Task.TaskStatus.COMPLETED
+                for subtask in self.subtasks.all()
+            ):
+                self.status = new_status
+                self.completed_at = timezone.now()
+                self.save(update_fields=["status", "completed_at"])
+            else:
+                raise ValidationError("Не все подзадачи могут быть завершены")
+
         elif new_status == Task.TaskStatus.PAUSED:
             if current_status != Task.TaskStatus.IN_PROGRESS:
                 raise ValidationError(
@@ -96,9 +102,13 @@ class Task(models.Model):
             self.save(update_fields=["status"])
 
     def save(self, *args, **kwargs):
+        update_fields = kwargs.get("update_fields", None)
         if not self.pk:
             self.status = self.TaskStatus.ASSIGNED
-        super().save(*args, **kwargs)
-        self.time_fact = self.calculate_time()
-        self.planned_effort = self.calculate_efforts()
-        super().save(update_fields=["time_fact", "planned_effort"])
+            super().save(*args, **kwargs)
+        if update_fields is None or "planned_effort" in update_fields:
+            self.planned_effort = self.calculate_efforts()
+
+        if update_fields is None or "time_fact" in update_fields:
+            self.time_fact = self.calculate_time()
+        super().save(update_fields=update_fields)

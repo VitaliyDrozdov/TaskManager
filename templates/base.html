@@ -10,19 +10,60 @@
   <title>{% block title %}Мой сайт{% endblock %}</title>
   {% bootstrap_css %}
   {% bootstrap_javascript %}
+  <style>
+    /* Дополнительные стили могут быть добавлены здесь */
+  </style>
 </head>
 <body>
   {% include "includes/header.html" %}
 
   <main>
-    <div class="container py-5">
-      {% block content %}
-      {% endblock %}
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-3">
+          <!-- Левая панель с деревом задач -->
+          <div class="card">
+            <div class="card-header">
+              Дерево задач
+            </div>
+            <div class="card-body">
+              <ul class="list-group">
+                {% for task in tasks %}
+                  {% if task.parent_task is None %}
+                    <li class="list-group-item">
+                      <a href="{% url 'tasks:task_detail' task.id %}">{{ task.name }}</a>
+                      {% if task.subtasks.exists %}
+                        <ul class="list-group mt-3">
+                          {% for subtask in task.subtasks.all %}
+                            <li class="list-group-item">
+                              <a href="{% url 'tasks:task_detail' subtask.id %}">{{ subtask.name }}</a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-9">
+          <!-- Правая панель с описанием задачи -->
+          <div class="card">
+            <div class="card-header">
+              Описание задачи
+            </div>
+            <div class="card-body">
+              {% block content %}
+              {% endblock %}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
   {% include "includes/footer.html" %}
-
-
 </body>
 </html>

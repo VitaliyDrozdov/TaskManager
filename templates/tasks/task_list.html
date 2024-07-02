@@ -6,38 +6,34 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col">
-    {% if tasks %}
-      <h1 class="mb-4">Список задач</h1>
-      <ul class="list-group">
-        {% for task in tasks %}
-          <li class="list-group-item mb-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">
-                <a href="{% url 'tasks:task_detail' task.id %}">{{ task.name }}</a>
-              </h5>
-              <div>
-                <a href="{% url 'tasks:task_edit' task.id %}" class="btn btn-sm btn-primary me-2">Редактировать</a>
-                <a href="{% url 'tasks:task_delete' task.id %}" class="btn btn-sm btn-danger">Удалить</a>
-              </div>
+  {% if tasks %}
+    <h1 class="mb-4">Список задач</h1>
+    <ul class="list-group">
+      {% for task in tasks %}
+        <li class="list-group-item mb-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <a href="{% url 'tasks:task_detail' task.id %}">{{ task.name }}</a>
+            </h5>
+            <div>
+              <a href="{% url 'tasks:task_edit' task.id %}" class="btn btn-sm btn-primary me-2">Редактировать</a>
+              <a href="{% url 'tasks:task_delete' task.id %}" class="btn btn-sm btn-danger">Удалить</a>
             </div>
-            {% if task.subtasks.exists %}
-              <ul class="list-group mt-3">
-                {% for subtask in task.subtasks.all %}
-                  <li class="list-group-item">
-                    <a href="{% url 'tasks:task_detail' subtask.id %}">{{ subtask.name }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>В базе данных пока нет задач.</p>
-    {% endif %}
-    <a href="{% url 'tasks:task_create' %}" class="btn btn-success mt-3">Создать задачу</a>
-  </div>
-</div>
+          </div>
+          {% if task.subtasks.exists %}
+            <ul class="list-group mt-3">
+              {% for subtask in task.subtasks.all %}
+                <li class="list-group-item">
+                  <a href="{% url 'tasks:task_detail' subtask.id %}">{{ subtask.name }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>В базе данных пока нет задач.</p>
+  {% endif %}
+  <a href="{% url 'tasks:task_create' %}" class="btn btn-success mt-3">Создать задачу</a>
 {% endblock %}

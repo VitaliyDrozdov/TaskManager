@@ -23,33 +23,84 @@
     <div class="card-body">
       <form method="post">
         {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {% for error in form.non_field_errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
         <div class="mb-3">
           <label for="id_name" class="form-label">Название</label>
           {{ form.name }}
+          {% if form.name.errors %}
+            {% for error in form.name.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
         </div>
         <div class="mb-3">
           <label for="id_description" class="form-label">Описание</label>
           {{ form.description }}
+          {% if form.description.errors %}
+            {% for error in form.description.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
         </div>
         <div class="mb-3">
           <label for="id_assignees" class="form-label">Исполнители</label>
           {{ form.assignees }}
+          {% if form.assignees.errors %}
+            {% for error in form.assignees.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
         </div>
         <div class="mb-3">
           <label for="id_status" class="form-label">Статус</label>
           {{ form.status }}
+          {% if form.status.errors %}
+            {% for error in form.status.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
         </div>
         <div class="mb-3">
           <label for="id_planned_effort" class="form-label">Плановая трудоемкость</label>
           {{ form.planned_effort }}
+          {% if form.planned_effort.errors %}
+            {% for error in form.planned_effort.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
         </div>
         <div class="mb-3">
           <label for="id_time_fact" class="form-label">Фактическое выполнение</label>
           {{ form.time_fact }}
+          {% if form.time_fact.errors %}
+            {% for error in form.time_fact.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
         </div>
         <div class="mb-3">
           <label for="id_completed_at" class="form-label">Дата завершения</label>
           {{ form.completed_at }}
+          {% if form.completed_at.errors %}
+            {% for error in form.completed_at.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div class="mb-3">
+          <label for="id_parent_task" class="form-label">Головная задача</label>
+          {{ form.parent_task }}
+          {% if form.parent_task.errors %}
+            {% for error in form.parent_task.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
         </div>
         <button type="submit" class="btn btn-primary">Сохранить</button>
       </form>

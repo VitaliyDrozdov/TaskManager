@@ -23,6 +23,16 @@ class TaskDetailView(generic.DetailView):
     context_object_name = "task"
     pk_url_kwarg = "task_id"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task = self.object
+
+        context["planned_effort"] = task.calculate_efforts()
+        context["time_fact"] = task.calculate_time()
+        context["tasks"] = Task.objects.all()
+
+        return context
+
 
 class TaskCreateView(generic.CreateView):
     model = Task
@@ -34,6 +44,11 @@ class TaskCreateView(generic.CreateView):
             "tasks:task_detail", kwargs={"task_id": self.object.id}
         )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tasks"] = Task.objects.all()
+        return context
+
 
 class TaskUpdateView(generic.UpdateView):
     model = Task
@@ -42,7 +57,7 @@ class TaskUpdateView(generic.UpdateView):
     pk_url_kwarg = "task_id"
 
     def form_valid(self, form):
-        task = form.save(commit=False)
+        task = self.get_object()
         new_status = form.cleaned_data.get("status")
         try:
             task.set_status(new_status)
@@ -51,10 +66,18 @@ class TaskUpdateView(generic.UpdateView):
             return self.form_invalid(form)
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
     def get_success_url(self) -> str:
         return reverse_lazy(
             "tasks:task_detail", kwargs={"task_id": self.object.id}
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tasks"] = Task.objects.all()
+        return context
 
 
 class TaskDeleteView(generic.DeleteView):
@@ -74,3 +97,8 @@ class TaskDeleteView(generic.DeleteView):
             )
         self.object.delete()
         return redirect(self.success_url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tasks"] = Task.objects.all()
+        return context
