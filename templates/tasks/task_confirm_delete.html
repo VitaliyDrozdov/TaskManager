@@ -1,18 +1,22 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}
+  Подтверждение удаления задачи: {{ object.name }}
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1>Подтверждение удаления задачи</h1>
-    <hr>
-    <div class="row">
-        <div class="col-md-6">
-            <p>Вы уверены, что хотите удалить задачу "{{ object.name }}"?</p>
-            <form action="" method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger">Удалить</button>
-                <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">Отмена</a>
-            </form>
+<div class="container py-5">
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title">Вы уверены, что хотите удалить задачу: {{ object.name }}?</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-danger me-2">Удалить</button>
+          <a href="{% url 'tasks:task_detail' object.id %}" class="btn btn-secondary">Отмена</a>
         </div>
+      </form>
     </div>
+  </div>
 </div>
 {% endblock %}

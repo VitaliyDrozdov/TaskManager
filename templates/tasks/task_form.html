@@ -1,17 +1,59 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}
+  {% if view.action == 'create' %}
+    Создать новую задачу
+  {% elif view.action == 'update' %}
+    Редактировать задачу: {{ object.name }}
+  {% endif %}
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1>{% if form.instance.pk %}Редактирование задачи{% else %}Создание задачи{% endif %}</h1>
-    <hr>
-    <div class="row">
-        <div class="col-md-6">
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Сохранить</button>
-            </form>
-        </div>
+<div class="container py-5">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">
+        {% if view.action == 'create' %}
+          Создать новую задачу
+        {% elif view.action == 'update' %}
+          Редактировать задачу: {{ object.name }}
+        {% endif %}
+      </h2>
     </div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_name" class="form-label">Название</label>
+          {{ form.name }}
+        </div>
+        <div class="mb-3">
+          <label for="id_description" class="form-label">Описание</label>
+          {{ form.description }}
+        </div>
+        <div class="mb-3">
+          <label for="id_assignees" class="form-label">Исполнители</label>
+          {{ form.assignees }}
+        </div>
+        <div class="mb-3">
+          <label for="id_status" class="form-label">Статус</label>
+          {{ form.status }}
+        </div>
+        <div class="mb-3">
+          <label for="id_planned_effort" class="form-label">Плановая трудоемкость</label>
+          {{ form.planned_effort }}
+        </div>
+        <div class="mb-3">
+          <label for="id_time_fact" class="form-label">Фактическое выполнение</label>
+          {{ form.time_fact }}
+        </div>
+        <div class="mb-3">
+          <label for="id_completed_at" class="form-label">Дата завершения</label>
+          {{ form.completed_at }}
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

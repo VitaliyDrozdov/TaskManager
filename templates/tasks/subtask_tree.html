@@ -1,0 +1,18 @@
+<li class="list-group-item">
+  <div class="d-flex justify-content-between align-items-center">
+    <h6 class="mb-0">
+      <a href="{% url 'tasks:task_detail' subtask.id %}">{{ subtask.name }}</a>
+    </h6>
+    <div>
+      <a href="{% url 'tasks:task_edit' subtask.id %}" class="btn btn-sm btn-primary me-2">Редактировать</a>
+      <a href="{% url 'tasks:task_delete' subtask.id %}" class="btn btn-sm btn-danger">Удалить</a>
+    </div>
+  </div>
+  {% if subtask.subtasks.exists %}
+    <ul class="list-group mt-3">
+      {% for subtask in subtask.subtasks.all %}
+        {% include 'tasks/subtask_tree.html' with subtask=subtask %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+</li>
