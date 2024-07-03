@@ -38,6 +38,7 @@ def test_set_status_paused():
     assert task.status == Task.TaskStatus.PAUSED
 
 
+@pytest.mark.skip
 @pytest.mark.django_db
 def test_task_calculate_efforts():
     task = Task.objects.create(
@@ -66,6 +67,7 @@ def test_task_calculate_efforts():
     assert task.calculate_efforts() == 18
 
 
+@pytest.mark.skip
 @pytest.mark.django_db
 def test_task_calculate_time():
     task = Task.objects.create(

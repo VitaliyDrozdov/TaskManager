@@ -16,7 +16,11 @@ class TaskListView(generic.ListView):
     context_object_name = "tasks"
 
     def get_queryset(self):
-        return Task.objects.filter(parent_task__isnull=True)
+        tasks = Task.objects.filter(parent_task__isnull=True)
+        for task in tasks:
+            task.total_planned_effort = task.total_planned_effort
+            task.total_time_fact = task.total_time_fact
+        return tasks
 
 
 class TaskDetailView(generic.DetailView):
@@ -29,8 +33,8 @@ class TaskDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         task = self.object
 
-        context["planned_effort"] = task.calculate_efforts()
-        context["time_fact"] = task.calculate_time()
+        context["total_planned_effort"] = task.total_planned_effort
+        context["total_time_fact"] = task.total_time_fact
         context["tasks"] = Task.objects.all()
 
         return context

@@ -119,13 +119,12 @@ class Task(models.Model):
         update_fields = kwargs.get("update_fields", None)
         if not self.pk:
             self.status = self.TaskStatus.ASSIGNED
-            super().save(*args, **kwargs)
-        if update_fields is None or "planned_effort" in update_fields:
+        super().save(*args, **kwargs)
+        if update_fields is None or "total_planned_effort" in update_fields:
             self.total_planned_effort = self.calculate_efforts()
-
-        if update_fields is None or "time_fact" in update_fields:
+        if update_fields is None or "total_time_fact" in update_fields:
             self.total_time_fact = self.calculate_time()
-        super().save(update_fields=update_fields)
+        super().save(update_fields=["total_time_fact", "total_planned_effort"])
 
     def delete(self, *args, **kwargs):
         self._reassign_subtasks()
