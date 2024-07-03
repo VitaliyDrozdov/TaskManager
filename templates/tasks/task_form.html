@@ -2,9 +2,9 @@
 
 {% block title %}
   {% if view.action == 'create' %}
-    Создать новую задачу
+    Создать задачу
   {% elif view.action == 'update' %}
-    Редактировать задачу: {{ object.name }}
+    Редактировать: {{ object.name }}
   {% endif %}
 {% endblock %}
 
@@ -14,9 +14,9 @@
     <div class="card-header">
       <h2 class="card-title">
         {% if view.action == 'create' %}
-          Создать новую задачу
+          Создать задачу
         {% elif view.action == 'update' %}
-          Редактировать задачу: {{ object.name }}
+          Редактировать: {{ object.name }}
         {% endif %}
       </h2>
     </div>

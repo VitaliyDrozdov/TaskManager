@@ -1,0 +1,10 @@
+<li class="list-group-item">
+  <a href="{% url 'tasks:task_detail' task.id %}">{{ task.name }}</a>
+  {% if task.subtasks.exists %}
+    <ul class="list-group mt-3">
+      {% for subtask in task.subtasks.all %}
+        {% include "tasks/task_tree_node.html" with task=subtask %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+</li>

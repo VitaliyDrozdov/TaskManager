@@ -11,6 +11,8 @@ from tasks.models import Task
 class TaskListView(generic.ListView):
     model = Task
     template_name = "tasks/task_list.html"
+    ordering = "created_at"
+    paginate_by = 10
     context_object_name = "tasks"
 
     def get_queryset(self):

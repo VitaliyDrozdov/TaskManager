@@ -31,7 +31,7 @@ class Task(models.Model):
         default=0, verbose_name="Фактическое выполнение"
     )
     completed_at = models.DateTimeField(
-        null=True, blank=True, verbose_name="Дата заверщения"
+        null=True, blank=True, verbose_name="Дата завершения"
     )
     parent_task = models.ForeignKey(
         "self",
@@ -126,3 +126,12 @@ class Task(models.Model):
         if update_fields is None or "time_fact" in update_fields:
             self.total_time_fact = self.calculate_time()
         super().save(update_fields=update_fields)
+
+    def delete(self, *args, **kwargs):
+        self._reassign_subtasks()
+        super().delete(*args, **kwargs)
+
+    def _reassign_subtasks(self):
+        for subtask in self.subtasks.all():
+            subtask.parent_task = self.parent_task
+            subtask.save(update_fields=["parent_task"])

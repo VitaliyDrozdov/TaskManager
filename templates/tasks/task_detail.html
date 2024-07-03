@@ -28,7 +28,7 @@
         <p><strong>Общее фактическое выполнение:</strong> {{ task.total_time_fact }} ч.</p>
         <p><strong>Дата создания:</strong> {{ task.created_at }}</p>
         {% if task.completed_at %}
-          <p><strong>Дата завершения:</strong> {{ task.completed_at }}</p>
+          <p><strong>Срок:</strong> {{ task.completed_at }}</p>
         {% endif %}
         {% if task.parent_task %}
           <p><strong>Головная задача:</strong> <a href="{% url 'tasks:task_detail' task.parent_task.id %}">{{ task.parent_task.name }}</a></p>
@@ -60,7 +60,7 @@
     <div class="mt-3">
       <a href="{% url 'tasks:task_edit' task.id %}" class="btn btn-primary">Редактировать</a>
       <a href="{% url 'tasks:task_delete' task.id %}" class="btn btn-danger">Удалить</a>
-      <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">Назад к списку задач</a>
+      <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">К списку задач</a>
     </div>
   </div>
 </div>
