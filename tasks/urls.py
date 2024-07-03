@@ -6,6 +6,7 @@ from tasks.views import (
     TaskDetailView,
     TaskListView,
     TaskUpdateView,
+    task_detail_ajax,
 )
 
 app_name = "tasks"
@@ -18,4 +19,5 @@ urlpatterns = [
     path(
         "<int:task_id>/delete/", TaskDeleteView.as_view(), name="task_delete"
     ),
+    path("task/<int:pk>/", task_detail_ajax, name="task_detail_ajax"),
 ]
