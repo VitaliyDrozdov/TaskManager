@@ -25,29 +25,26 @@ Task manager - приложение для управления задачами
    cd task_manager
 
 2. **Установить poetry**
-### Установка<a name="install"></a>
 
 1. Установите poetry следуя [инструкции с официального сайта](https://python-poetry.org/docs/#installation).
 2. После установки перезапустите оболочку и введите команду
 ```SHELL
 poetry --version
-
-3. Копируем файл **.env.example** с новым названием **.env** и заполняем его необходимыми данными:
+```
+3. **Копируем файл**  .env.example с новым названием .env и заполняем его необходимыми данными:
 
 ```shell
 cp .env.example .env
 ```
-```shell
-nano .env
-```
 
-4. Подготавливаем бэкенд к работе:
+
+4. **Подготавливаем бэкенд к работе**:
 
 ```shell
 python manage.py migrate
 ```
 
-5. Наполняем БД данными заданий:
+5. **Наполняем БД данными заданий**:
 
 ```shell
 python manage.py loaddata fixtures/data.json
@@ -67,7 +64,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-http://localhost:8000/
+http://127.0.0.1:8000/
 
 
 <!-- MARKDOWN LINKS & BADGES -->
