@@ -102,3 +102,7 @@ class TaskDeleteView(generic.DeleteView):
         context = super().get_context_data(**kwargs)
         context["tasks"] = Task.objects.all()
         return context
+
+
+def redirect_to_tasks(request):
+    return redirect("tasks:task_list")
