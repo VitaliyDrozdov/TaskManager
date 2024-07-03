@@ -50,7 +50,7 @@ python manage.py migrate
 5. Наполняем БД данными заданий:
 
 ```shell
-python manage.py loaddata \
+python manage.py loaddata initial_tasks.json
 ```
 
 ## Запуск проекта локально (без docker)<a name="local-run"></a>

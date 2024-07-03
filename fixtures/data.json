@@ -1,0 +1,116 @@
+[
+    {
+        "model": "tasks.task",
+        "pk": 1,
+        "fields": {
+            "name": "Task A",
+            "description": "Description of Task A",
+            "assignees": "John Doe",
+            "status": "ASSIGNED",
+            "planned_effort": 10,
+            "time_fact": 5
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 2,
+        "fields": {
+            "name": "Task B",
+            "description": "Description of Task B",
+            "assignees": "Jane Smith",
+            "status": "IN_PROGRESS",
+            "planned_effort": 15,
+            "time_fact": 8
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 3,
+        "fields": {
+            "name": "Task C",
+            "description": "Description of Task C",
+            "assignees": "Alex Brown",
+            "status": "PAUSED",
+            "planned_effort": 20,
+            "time_fact": 12
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 4,
+        "fields": {
+            "name": "Task D",
+            "description": "Description of Task D",
+            "assignees": "Emily White",
+            "status": "COMPLETED",
+            "planned_effort": 25,
+            "time_fact": 18,
+            "completed_at": "2024-07-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 5,
+        "fields": {
+            "name": "Task A1",
+            "description": "Description of Task A1",
+            "assignees": "John Doe",
+            "status": "IN_PROGRESS",
+            "planned_effort": 8,
+            "time_fact": 4,
+            "parent_task": 1
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 6,
+        "fields": {
+            "name": "Task A2",
+            "description": "Description of Task A2",
+            "assignees": "John Doe",
+            "status": "ASSIGNED",
+            "planned_effort": 12,
+            "time_fact": 6,
+            "parent_task": 1
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 7,
+        "fields": {
+            "name": "Task A11",
+            "description": "Description of Task A11",
+            "assignees": "John Doe",
+            "status": "IN_PROGRESS",
+            "planned_effort": 5,
+            "time_fact": 3,
+            "parent_task": 5
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 8,
+        "fields": {
+            "name": "Task A12",
+            "description": "Description of Task A12",
+            "assignees": "John Doe",
+            "status": "PAUSED",
+            "planned_effort": 3,
+            "time_fact": 2,
+            "parent_task": 5
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 9,
+        "fields": {
+            "name": "Task A21",
+            "description": "Description of Task A21",
+            "assignees": "John Doe",
+            "status": "IN_PROGRESS",
+            "planned_effort": 6,
+            "time_fact": 4,
+            "parent_task": 6
+        }
+    }
+]
