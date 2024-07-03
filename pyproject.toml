@@ -11,6 +11,8 @@ django = "4.2.5"
 django-bootstrap5 = "^24.2"
 pytest-django = "^4.8.0"
 mixer = "^7.2.2"
+python-dotenv = "^1.0.1"
+psycopg2-binary = "^2.9.9"
 
 
 

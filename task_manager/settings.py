@@ -1,16 +1,26 @@
+import os
 from pathlib import Path
+
+from django.core.management.utils import get_random_secret_key
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = (
-    "django-insecure-@t4tn)0$%pl4)51*)n=xa$iiu5&z067ilwjk=obg$ox@#+799n"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+
+DEFAULT_ALLOWED_HOSTS = "localhost, 127.0.0.1"
+ALLOWED_HOSTS = (
+    os.getenv("ALLOWED_HOSTS", DEFAULT_ALLOWED_HOSTS)
+    .strip()
+    .replace(" ", "")
+    .split(",")
 )
-
-
-DEBUG = True
-ALLOWED_HOSTS = [
-    "localhost",
+INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
@@ -38,9 +48,6 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
 ROOT_URLCONF = "task_manager.urls"
 
 TEMPLATES_DIR = BASE_DIR / "templates"
@@ -65,13 +72,26 @@ TEMPLATES = [
 WSGI_APPLICATION = "task_manager.wsgi.application"
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+USE_SQLITE = os.getenv("USE_SQLITE", "False").lower() == "true"
 
+if USE_SQLITE:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": os.getenv("POSTGRES_DB", "postgres"),
+            "USER": os.getenv("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD", ""),
+            "HOST": os.getenv("DB_HOST", ""),
+            "PORT": os.getenv("DB_PORT", 5432),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -8,7 +8,8 @@
             "assignees": "John Doe",
             "status": "ASSIGNED",
             "planned_effort": 10,
-            "time_fact": 5
+            "time_fact": 5,
+            "created_at": "2024-07-01T08:00:00Z"
         }
     },
     {
@@ -20,7 +21,8 @@
             "assignees": "Jane Smith",
             "status": "IN_PROGRESS",
             "planned_effort": 15,
-            "time_fact": 8
+            "time_fact": 8,
+            "created_at": "2024-07-01T09:00:00Z"
         }
     },
     {
@@ -32,7 +34,8 @@
             "assignees": "Alex Brown",
             "status": "PAUSED",
             "planned_effort": 20,
-            "time_fact": 12
+            "time_fact": 12,
+            "created_at": "2024-07-01T10:00:00Z"
         }
     },
     {
@@ -45,7 +48,8 @@
             "status": "COMPLETED",
             "planned_effort": 25,
             "time_fact": 18,
-            "completed_at": "2024-07-01T10:00:00Z"
+            "completed_at": "2024-07-01T10:00:00Z",
+            "created_at": "2024-07-01T11:00:00Z"
         }
     },
     {
@@ -58,7 +62,8 @@
             "status": "IN_PROGRESS",
             "planned_effort": 8,
             "time_fact": 4,
-            "parent_task": 1
+            "parent_task": 1,
+            "created_at": "2024-07-01T12:00:00Z"
         }
     },
     {
@@ -71,7 +76,8 @@
             "status": "ASSIGNED",
             "planned_effort": 12,
             "time_fact": 6,
-            "parent_task": 1
+            "parent_task": 1,
+            "created_at": "2024-07-01T13:00:00Z"
         }
     },
     {
@@ -84,7 +90,8 @@
             "status": "IN_PROGRESS",
             "planned_effort": 5,
             "time_fact": 3,
-            "parent_task": 5
+            "parent_task": 5,
+            "created_at": "2024-07-01T14:00:00Z"
         }
     },
     {
@@ -97,7 +104,8 @@
             "status": "PAUSED",
             "planned_effort": 3,
             "time_fact": 2,
-            "parent_task": 5
+            "parent_task": 5,
+            "created_at": "2024-07-01T15:00:00Z"
         }
     },
     {
@@ -110,7 +118,8 @@
             "status": "IN_PROGRESS",
             "planned_effort": 6,
             "time_fact": 4,
-            "parent_task": 6
+            "parent_task": 6,
+            "created_at": "2024-07-01T16:00:00Z"
         }
     }
 ]
