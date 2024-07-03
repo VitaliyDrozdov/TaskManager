@@ -108,6 +108,13 @@ class Task(models.Model):
             self.status = new_status
             self.save(update_fields=["status"])
 
+    def clean(self):
+        super().clean()
+        if self.parent_task == self:
+            raise ValidationError(
+                "Задача не может быть подзадачей для самой себя."
+            )
+
     def save(self, *args, **kwargs):
         update_fields = kwargs.get("update_fields", None)
         if not self.pk:
